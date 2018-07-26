@@ -20,23 +20,7 @@
 #include <sys/prctl.h>
 #include <sys/wait.h>
 
-#define O_CLONE_MOUNT	040000000	/* Used with O_PATH to clone the mount subtree at path */
-#define O_NON_RECURSIVE	0100000000	/* Used with O_CLONE_MOUNT to only clone one mount */
-
-#define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
-#define MOVE_MOUNT_F_AUTOMOUNTS		0x00000002 /* Follow automounts on from path */
-#define MOVE_MOUNT_F_EMPTY_PATH		0x00000004 /* Empty from path permitted */
-#define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
-#define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
-#define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
-#define MOVE_MOUNT__MASK		0x00000077
-
-static inline int move_mount(int from_dfd, const char *from_pathname,
-			     int to_dfd, const char *to_pathname,
-			     unsigned int flags)
-{
-	return syscall(390, from_dfd, from_pathname, to_dfd, to_pathname, flags);
-}
+#include "fs.h"
 
 void format(void)
 {

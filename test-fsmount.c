@@ -19,31 +19,7 @@
 #include <linux/fs.h>
 #include <linux/unistd.h>
 
-#define __NR_open_tree         389
-#define __NR_move_mount                390
-#define __NR_fsopen            391
-#define __NR_fsmount           392
-#define __NR_fspick            393
-#define __NR_fsinfo            394
-#define __NR_fsconfig           395
-
-enum {
-       fsconfig_set_flag,              /* Set parameter, supplying no value */
-       fsconfig_set_string,            /* Set parameter, supplying a string value */
-       fsconfig_set_binary,            /* Set parameter, supplying a binary blob value
-*/
-       fsconfig_set_path,              /* Set parameter, supplying an object by path */
-
-       fsconfig_set_path_empty,        /* Set parameter, supplying an object by (empty
- path */
-       fsconfig_set_fd,                /* Set parameter, supplying an object by fd */
-       fsconfig_cmd_create,            /* Invoke superblock creation */
-       fsconfig_cmd_reconfigure,       /* Invoke superblock reconfiguration */
-};
-
-
-#define MOVE_MOUNT_F_EMPTY_PATH		0x00000004
-#define E(x) do { if ((x) == -1) { perror(#x); exit(1); } } while(0)
+#include "fs.h"
 
 static void check_messages(int fd)
 {
@@ -82,30 +58,6 @@ void mount_error(int fd, const char *s)
 	exit(1);
 }
 
-static inline int fsopen(const char *fs_name, unsigned int flags)
-{
-	return syscall(__NR_fsopen, fs_name, flags);
-}
-
-static inline int fsmount(int fsfd, unsigned int flags, unsigned int ms_flags)
-{
-	return syscall(__NR_fsmount, fsfd, flags, ms_flags);
-}
-
-static inline int fsconfig(int fsfd, unsigned int cmd,
-			   const char *key, const void *val, int aux)
-{
-	return syscall(__NR_fsconfig, fsfd, cmd, key, val, aux);
-}
-
-static inline int move_mount(int from_dfd, const char *from_pathname,
-			     int to_dfd, const char *to_pathname,
-			     unsigned int flags)
-{
-	return syscall(__NR_move_mount,
-		       from_dfd, from_pathname,
-		       to_dfd, to_pathname, flags);
-}
 
 #define E_fsconfig(fd, cmd, key, val, aux)				\
 	do {								\
@@ -118,13 +70,13 @@ int main(int argc, char *argv[])
 	int fsfd, mfd;
 
 	/* Mount a publically available AFS filesystem */
-	fsfd = fsopen("afs", 0);
+	fsfd = fsopen("ext4", 0);
 	if (fsfd == -1) {
 		perror("fsopen");
 		exit(1);
 	}
 
-	E_fsconfig(fsfd, fsconfig_set_string, "source", "#grand.central.org:root.cell.", 0);
+	E_fsconfig(fsfd, fsconfig_set_path, "source", "/tmp/vdb2", AT_FDCWD);
 	E_fsconfig(fsfd, fsconfig_cmd_create, NULL, NULL, 0);
 
 	mfd = fsmount(fsfd, 0, MS_RDONLY);
