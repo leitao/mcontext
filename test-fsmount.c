@@ -25,6 +25,21 @@
 #define __NR_fsmount           392
 #define __NR_fspick            393
 #define __NR_fsinfo            394
+#define __NR_fsconfig           395
+
+enum {
+       fsconfig_set_flag,              /* Set parameter, supplying no value */
+       fsconfig_set_string,            /* Set parameter, supplying a string value */
+       fsconfig_set_binary,            /* Set parameter, supplying a binary blob value
+*/
+       fsconfig_set_path,              /* Set parameter, supplying an object by path */
+
+       fsconfig_set_path_empty,        /* Set parameter, supplying an object by (empty
+ path */
+       fsconfig_set_fd,                /* Set parameter, supplying an object by fd */
+       fsconfig_cmd_create,            /* Invoke superblock creation */
+       fsconfig_cmd_reconfigure,       /* Invoke superblock reconfiguration */
+};
 
 
 #define MOVE_MOUNT_F_EMPTY_PATH		0x00000004
