@@ -6,17 +6,17 @@
 #define __NR_fsinfo            394
 #define __NR_fsconfig          395
 
-#define OPEN_TREE_CLONE                1               /* Clone the target tree and at
+#define OPEN_TREE_CLONE		1		/* Clone the target tree and at
 tach the clone */
-#define OPEN_TREE_CLOEXEC      O_CLOEXEC       /* Close the file on execve() */
+#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
 
 static inline int open_tree(int dirfd, const char *pathname, unsigned int flags)
 {
         return syscall(__NR_open_tree, dirfd, pathname, flags);
 }
 
-#define O_CLONE_MOUNT			040000000       /* Used with O_PATH to clone the mount subtree at path */
-#define O_NON_RECURSIVE			0100000000      /* Used with O_CLONE_MOUNT to only clone one mount */
+#define O_CLONE_MOUNT			040000000  /* Used with O_PATH to clone the mount subtree at path */
+#define O_NON_RECURSIVE			0100000000 /* Used with O_CLONE_MOUNT to only clone one mount */
 #define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
 #define MOVE_MOUNT_F_AUTOMOUNTS		0x00000002 /* Follow automounts on from path */
 #define MOVE_MOUNT_F_EMPTY_PATH		0x00000004 /* Empty from path permitted */
